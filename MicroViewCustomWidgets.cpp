@@ -2,6 +2,7 @@
  * 
  * 	Convert the current value of the widget and draw the ticker representing the value.
  */
+
 #include <MicroView.h>
 #include "MicroViewCustomWidgets.h"
 
@@ -18,7 +19,7 @@
  MicroViewWidget(newx, newy, min, max) {
   style=0;
   totalTicks=30;
-  
+
   preInit();
   initWidget(); 
   postInit();
@@ -59,7 +60,8 @@
 
 void MicroViewProgressBarBase::initWidget(){
   if (!initialized){
-    thickness=8;
+    thickness=DEFAULT_THICKNESS;
+    printLabel=true;
     initialized = true;
   }
 
@@ -246,7 +248,9 @@ uint8_t MicroViewProgressBarBase::getThickness() {
       break;
   }
 
-  uView.print(strBuffer);
+  if (printLabel){
+    uView.print(strBuffer);
+  }
 }
 
 
@@ -291,12 +295,23 @@ uint8_t MicroViewProgressBarBase::getThickness() {
 
 }
 
+/** \brief MicroViewProgressBar class initialisation with style and thickness 
+ * 
+ *  Initialise the MicroViewProgressBar widget with style WIDGETSTYLE0 or WIDGETSTYLE1 or WIDGETSTYLE2 (like 0, but vertical) 
+ *  or WIDGETSTYLE3 (like 1, but vertical). 
+ */
+
+ MicroViewConfigurableProgressBar::MicroViewConfigurableProgressBar(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty, int16_t thick, boolean printL):
+ MicroViewProgressBarBase(newx, newy, min, max, sty) {
+  thickness = thick;
+  printLabel = printL;
+}
+
 
 
 
 void MicroViewConfigurableProgressBar::initWidget(){
   initialized= true;
-  Serial.println(thickness);
 }
 
 // -------------------------------------------------------------------------------------
@@ -319,7 +334,7 @@ void MicroViewConfigurableProgressBar::initWidget(){
  *  Initialise the MicroViewProgressBar widget with default style.
  */
  MicroViewProgressBar::MicroViewProgressBar(uint8_t newx, uint8_t newy, int16_t min, int16_t max):
- MicroViewConfigurableProgressBar(newx, newy, min, max,WIDGETSTYLE0,8) {
+ MicroViewConfigurableProgressBar(newx, newy, min, max,WIDGETSTYLE0, DEFAULT_THICKNESS) {
  }
 
 /** \brief MicroViewProgressBar class initialisation with style. 
@@ -329,17 +344,21 @@ void MicroViewConfigurableProgressBar::initWidget(){
  */
 
  MicroViewProgressBar::MicroViewProgressBar(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):
- MicroViewConfigurableProgressBar(newx, newy, min, max, sty,8) {
+ MicroViewConfigurableProgressBar(newx, newy, min, max, sty, DEFAULT_THICKNESS,true) {
+ }
+
+ /** \brief MicroViewProgressBar class initialisation with style. 
+ * 
+ *  Initialise the MicroViewProgressBar widget with style WIDGETSTYLE0 or WIDGETSTYLE1 or WIDGETSTYLE2 (like 0, but vertical) 
+ *  or WIDGETSTYLE3 (like 1, but vertical). 
+ */
+
+ MicroViewProgressBar::MicroViewProgressBar(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty,boolean printLabel):
+ MicroViewConfigurableProgressBar(newx, newy, min, max, sty, DEFAULT_THICKNESS ,true) {
  }
 
 void MicroViewProgressBar::initWidget(){
-  //if (!initialized){
-  //  thickness = 8;
-  //  initialized= true;
-  //}
-
-  Serial.println(thickness);
-
+  initialized= true;
 }
 
 // -------------------------------------------------------------------------------------
