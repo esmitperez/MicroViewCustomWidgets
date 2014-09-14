@@ -33,23 +33,22 @@
  MicroViewProgressBarBase::MicroViewProgressBarBase(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):
  MicroViewWidget(newx, newy, min, max) {
 
+  style = sty;
   switch(sty){
-    case WIDGETSTYLE1: 
-    style=1;
-    totalTicks=60;
-    break;
-    case WIDGETSTYLE2: 
-    style=2;
-    totalTicks=20;
-    break;
-    case WIDGETSTYLE3: 
-    style=3;
-    totalTicks=40;
-    break;
-    default: 
-    style=0;
-    totalTicks=30;
-    break;
+    case WIDGETSTYLE1:
+      totalTicks=60;
+      break;
+    case WIDGETSTYLE2:
+      totalTicks=20;
+      break;
+    case WIDGETSTYLE3:
+      totalTicks=40;
+      break;
+    // If already 0 or invalid, just make sure it's 0.
+    default:
+      style=WIDGETSTYLE0;
+      totalTicks=30;
+      break;
   }
 
   preInit();
@@ -62,7 +61,6 @@ void MicroViewProgressBarBase::initWidget(){
   if (!initialized){
     thickness=8;
     initialized = true;
-
   }
 
   Serial.println(thickness);
@@ -128,29 +126,35 @@ uint8_t MicroViewProgressBarBase::getThickness() {
   offsetX=getWidgetX();
   offsetY=getWidgetY();
 
-  //Horizontal styles, style 0 or 1
-  if (style==0 || style==1) {
-    endOffset = offsetX + totalTicks + 1;
-    // Draw sides
-    uView.lineV(offsetX, offsetY, getThickness());
-    uView.lineV(offsetX+endOffset, offsetY, getThickness());
-    // Draw top/bottom
-    for (uint8_t i=offsetX; i<=endOffset; i++) {
-      uView.pixel(i, offsetY+getThickness());
-      uView.pixel(i, offsetY);
-    }
-  }
-  //Vertical styles, style 2 or 3
-  else {
-    endOffset = offsetY + totalTicks + 2;
-    uView.lineH(offsetX, offsetY, getThickness());
-    uView.lineH(offsetX, offsetY+endOffset, getThickness());
+  switch(style){
+    // HORIZONTAL
+    case WIDGETSTYLE0:
+    case WIDGETSTYLE1:
+      endOffset = offsetX + totalTicks + 1;
+      // Draw sides
+      uView.lineV(offsetX, offsetY, getThickness());
+      uView.lineV(offsetX+endOffset, offsetY, getThickness());
+      // Draw top/bottom
+      for (uint8_t i=offsetX; i<=endOffset; i++) {
+        uView.pixel(i, offsetY+getThickness());
+        uView.pixel(i, offsetY);
+      }
+      break;
+    // VERTICAL 
+    case WIDGETSTYLE2:
+    case WIDGETSTYLE3:
+      
+      endOffset = offsetY + totalTicks + 2;
+      uView.lineH(offsetX, offsetY, getThickness());
+      uView.lineH(offsetX, offsetY+endOffset, getThickness());
 
-    for (uint8_t i=offsetY; i<=endOffset; i++) {
-      uView.pixel(offsetX+getThickness(), i);
-      uView.pixel(offsetX, i);
-    }
+      for (uint8_t i=offsetY; i<=endOffset; i++) {
+        uView.pixel(offsetX+getThickness(), i);
+        uView.pixel(offsetX, i);
+      }
+      break;
   }
+
 }
 
 /** \brief Draw widget value.
@@ -169,44 +173,56 @@ uint8_t MicroViewProgressBarBase::getThickness() {
   offsetY=getWidgetY();
 
   // Draw previous pointer in XOR mode to erase it
-  if (style==0 || style==1){		//Horizontal
-    tickPosition = (((float)(uint16_t)(prevValue-getMinValue())/(float)(uint16_t)(getMaxValue()-getMinValue())) * totalTicks) ;
-    endOffset = offsetX + totalTicks + 2;
+  switch(style){
+    // HORIZONTAL
+    case WIDGETSTYLE0:
+    case WIDGETSTYLE1:
+      tickPosition = (((float)(uint16_t)(prevValue-getMinValue())/(float)(uint16_t)(getMaxValue()-getMinValue())) * totalTicks) ;
+      endOffset = offsetX + totalTicks + 2;
 
-    for(uint8_t i =offsetX+1; i <= tickPosition; i++){
-      uView.lineV(i,offsetY+1, getThickness()-1, WHITE, XOR);
-    }
+      for(uint8_t i =offsetX+1; i <= tickPosition; i++){
+        uView.lineV(i,offsetY+1, getThickness()-1, WHITE, XOR);
+      }
+      break;
+     // VERTICAL 
+    case WIDGETSTYLE2:
+    case WIDGETSTYLE3:
+      tickPosition = ((float)(uint16_t)(getMaxValue()-prevValue)/(float)(uint16_t)(getMaxValue()-getMinValue()))*totalTicks + 1;
+      endOffset = offsetY + totalTicks + 2;
 
+      for(uint8_t i = endOffset-1; i >= tickPosition; i--){
+        uView.lineH(offsetX+1,i,getThickness()-1, WHITE, XOR);
+      }
+      break;
   }
-  else {					//Vertical
-    tickPosition = ((float)(uint16_t)(getMaxValue()-prevValue)/(float)(uint16_t)(getMaxValue()-getMinValue()))*totalTicks + 1;
-    endOffset = offsetY + totalTicks + 2;
 
-    for(uint8_t i = endOffset-1; i >= tickPosition; i--){
-      uView.lineH(offsetX+1,i,getThickness()-1, WHITE, XOR);
-    }
-
-  }
 
   if (needFirstDraw) {
     sprintf(strBuffer, formatStr, prevValue);	// print with fixed width so that blank space will cover larger value
     needFirstDraw=false;
   }
   else {
-    // Draw current pointer
-    if (style==0 || style==1){		//Horizontal
+    // Draw previous pointer in XOR mode to erase it
+    switch(style){
+    // HORIZONTAL
+    case WIDGETSTYLE0:
+    case WIDGETSTYLE1:  
       tickPosition = (((float)(uint16_t)(getValue()-getMinValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*totalTicks);
 
       for(uint8_t i =offsetX+1; i <= tickPosition; i++){
         //uView.lineV(i, offsetY+1, getThickness()-2, WHITE, XOR);
         uView.lineV(i,offsetY+1, getThickness()-1,WHITE,XOR);
       }
-    }
-    else {            //Vertical
+      break;
+
+      // VERTICAL 
+    case WIDGETSTYLE2:
+    case WIDGETSTYLE3:
       tickPosition = ((float)(uint16_t)(getMaxValue()-getValue())/(float)(uint16_t)(getMaxValue()-getMinValue()))*totalTicks + 1;
       for(uint8_t i = endOffset-1; i >= tickPosition; i--){
         uView.lineH(offsetX+1,i,getThickness()-1, WHITE, XOR);
       }
+      break;
     }
 
     sprintf(strBuffer, formatStr, getValue());	// print with fixed width so that blank space will cover larger value
@@ -216,18 +232,18 @@ uint8_t MicroViewProgressBarBase::getThickness() {
   // Draw value
   switch(style){
     case 0:
-    //uView.setCursor(getLabelX()+totalTicks+4, offsetY+1);
-    uView.setCursor(getLabelX()+totalTicks+4, getLabelY() + 1);
-    break;
+      //uView.setCursor(getLabelX()+totalTicks+4, offsetY+1);
+      uView.setCursor(getLabelX()+totalTicks+4, getLabelY() + 1);
+      break;
     case 1:
-    uView.setCursor(getLabelX(), offsetY+10);
-    break;
+      uView.setCursor(getLabelX(), offsetY+10);
+      break;
     case 2:
-    uView.setCursor(getLabelX()+1, offsetY+totalTicks+4);
-    break;  
+      uView.setCursor(getLabelX()+1, offsetY+totalTicks+4);
+      break;  
     default:
-    uView.setCursor(getLabelX()+getThickness() + 4, offsetY);
-    break;
+      uView.setCursor(getLabelX()+getThickness() + 4, offsetY);
+      break;
   }
 
   uView.print(strBuffer);

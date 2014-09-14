@@ -40,8 +40,9 @@ void setup() {
 
 
 void loop() {
-  for (int s=0; s<=4; s+=2){
+  for (int s=0; s<8; s++){
     drawSet(s);
+    s++;
   }
 }
 
@@ -51,20 +52,19 @@ void drawSet(uint8_t s){
   ((MicroViewWidget *) progress[s+1])->reDraw();
 
   for (int i=0;i<=150;i++) {
-    progress[s]->setValue(i);   // set value i to widget0
+    progress[s]->setValue(i);  
     progress[s+1]->setValue(i);
-    delay(10);
+    delay(5);
     uView.display();
   }
 
   for(int i=150; i>=0;i--) {
-    progress[s]->setValue(i);   // set value i to widget0
+    progress[s]->setValue(i);  
     progress[s+1]->setValue(i);
-    delay(10);
+    delay(5);
     uView.display();
   }
 
   uView.clear(PAGE);  
-  delay(1200);
+  delay(200);
 }
-
