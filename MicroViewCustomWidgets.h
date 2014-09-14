@@ -32,23 +32,28 @@ protected:
   virtual void initWidget();
 };
 
-class MicroViewProgressBar: public
-MicroViewProgressBarBase {
-public:
-  MicroViewProgressBar(uint8_t newx, uint8_t newy, int16_t min, int16_t max);
-  MicroViewProgressBar(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty);
-
-protected:
-  virtual void initWidget();
-};
 
 class MicroViewConfigurableProgressBar: public
 MicroViewProgressBarBase {
 public:
+  MicroViewConfigurableProgressBar(uint8_t newx, uint8_t newy, int16_t min, int16_t max);
+  MicroViewConfigurableProgressBar(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty);
+
   MicroViewConfigurableProgressBar(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty, int16_t thickness);
 protected:
 virtual void initWidget();
 };
+
+class MicroViewProgressBar: public
+MicroViewConfigurableProgressBar {
+public:
+  MicroViewProgressBar(uint8_t newx, uint8_t newy, int16_t min, int16_t max);
+  MicroViewProgressBar(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty);
+  
+protected:
+  virtual void initWidget();
+};
+
 
 
 #endif

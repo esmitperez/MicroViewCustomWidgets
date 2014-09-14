@@ -59,10 +59,12 @@
 
 
 void MicroViewProgressBarBase::initWidget(){
-  if (!initialized)
+  if (!initialized){
     thickness=8;
+    initialized = true;
 
-  initialized = true;
+  }
+
   Serial.println(thickness);
 
 }
@@ -231,49 +233,6 @@ uint8_t MicroViewProgressBarBase::getThickness() {
   uView.print(strBuffer);
 }
 
-// -------------------------------------------------------------------------------------
-// ProgressBar Widget - end
-// -------------------------------------------------------------------------------------
-
-
-// -------------------------------------------------------------------------------------
-// Fixed Size ProgressBar Widget - start
-// -------------------------------------------------------------------------------------
-
-/** \brief MicroViewProgressBar class initialisation. 
- * 
- *  Initialise the MicroViewProgressBar widget with default style.
- */
-
-/** \brief MicroViewProgressBar class initialisation with style. 
- * 
- *  Initialise the MicroViewProgressBar widget with style WIDGETSTYLE0 or WIDGETSTYLE1 or WIDGETSTYLE2 (like 0, but vertical) 
- *  or WIDGETSTYLE3 (like 1, but vertical). 
- */
-
-
-
- MicroViewProgressBar::MicroViewProgressBar(uint8_t newx, uint8_t newy, int16_t min, int16_t max):
- MicroViewProgressBarBase(newx, newy, min, max) {
- }
-
- MicroViewProgressBar::MicroViewProgressBar(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):
- MicroViewProgressBarBase(newx, newy, min, max, sty) {
- }
-
- void MicroViewProgressBar::initWidget(){
-   if (!initialized)
-    thickness = 8;
-
-  initialized= true;  
-  Serial.println(thickness);
-
-}
-
-// -------------------------------------------------------------------------------------
-// Fixed Size Widget - end
-// -------------------------------------------------------------------------------------
-
 
 // -------------------------------------------------------------------------------------
 // Configurable ProgressBar Widget - start
@@ -284,7 +243,26 @@ uint8_t MicroViewProgressBarBase::getThickness() {
  *  Initialise the MicroViewProgressBar widget with default style.
  */
 
+/** \brief MicroViewProgressBar class initialisation. 
+ * 
+ *  Initialise the MicroViewProgressBar widget with default style.
+ */
+ MicroViewConfigurableProgressBar::MicroViewConfigurableProgressBar(uint8_t newx, uint8_t newy, int16_t min, int16_t max):
+ MicroViewProgressBarBase(newx, newy, min, max) {
+ }
+
 /** \brief MicroViewProgressBar class initialisation with style. 
+ * 
+ *  Initialise the MicroViewProgressBar widget with style WIDGETSTYLE0 or WIDGETSTYLE1 or WIDGETSTYLE2 (like 0, but vertical) 
+ *  or WIDGETSTYLE3 (like 1, but vertical). 
+ */
+
+ MicroViewConfigurableProgressBar::MicroViewConfigurableProgressBar(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):
+ MicroViewProgressBarBase(newx, newy, min, max, sty) {
+ }
+
+
+/** \brief MicroViewProgressBar class initialisation with style and thickness 
  * 
  *  Initialise the MicroViewProgressBar widget with style WIDGETSTYLE0 or WIDGETSTYLE1 or WIDGETSTYLE2 (like 0, but vertical) 
  *  or WIDGETSTYLE3 (like 1, but vertical). 
@@ -298,15 +276,60 @@ uint8_t MicroViewProgressBarBase::getThickness() {
 }
 
 
+
+
 void MicroViewConfigurableProgressBar::initWidget(){
   initialized= true;
+  Serial.println(thickness);
+}
+
+// -------------------------------------------------------------------------------------
+// Configurable ProgressBar Widget - end
+// -------------------------------------------------------------------------------------
+
+
+
+// -------------------------------------------------------------------------------------
+// ProgressBar Widget - end
+// -------------------------------------------------------------------------------------
+
+
+// -------------------------------------------------------------------------------------
+// Fixed Size ProgressBar Widget - start
+// -------------------------------------------------------------------------------------
+
+/** \brief MicroViewProgressBar class initialisation. 
+ * 
+ *  Initialise the MicroViewProgressBar widget with default style.
+ */
+ MicroViewProgressBar::MicroViewProgressBar(uint8_t newx, uint8_t newy, int16_t min, int16_t max):
+ MicroViewConfigurableProgressBar(newx, newy, min, max,WIDGETSTYLE0,8) {
+ }
+
+/** \brief MicroViewProgressBar class initialisation with style. 
+ * 
+ *  Initialise the MicroViewProgressBar widget with style WIDGETSTYLE0 or WIDGETSTYLE1 or WIDGETSTYLE2 (like 0, but vertical) 
+ *  or WIDGETSTYLE3 (like 1, but vertical). 
+ */
+
+ MicroViewProgressBar::MicroViewProgressBar(uint8_t newx, uint8_t newy, int16_t min, int16_t max, uint8_t sty):
+ MicroViewConfigurableProgressBar(newx, newy, min, max, sty,8) {
+ }
+
+void MicroViewProgressBar::initWidget(){
+  //if (!initialized){
+  //  thickness = 8;
+  //  initialized= true;
+  //}
+
   Serial.println(thickness);
 
 }
 
 // -------------------------------------------------------------------------------------
-// Configurable Widget - end
+// Fixed Size ProgressBar Widget - end
 // -------------------------------------------------------------------------------------
+
 
 
 
