@@ -22,6 +22,7 @@ void setup() {
   uView.flipVertical(true);
   // horizontal
   progress[0] = new MicroViewProgressBar(0,0,0,150,WIDGETSTYLE0); 
+  
   progress[1] = new MicroViewProgressBar(0,30,0, 150,WIDGETSTYLE0,4);
   // Vertical
   progress[2] = new MicroViewProgressBar(0,0,0, 150, WIDGETSTYLE1); 
@@ -33,7 +34,7 @@ void setup() {
   // Vertical
   progress[6] = new MicroViewProgressBar(0,0,0, 150, WIDGETSTYLE3); 
   progress[7] = new MicroViewProgressBar(30,0,0, 150, WIDGETSTYLE3,4);  
-
+  
   uView.clear(PAGE);  // erase the memory buffer, when next uView.display() is called, the OLED will be cleared.
 
 }
